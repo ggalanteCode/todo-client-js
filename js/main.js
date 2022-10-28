@@ -27,21 +27,18 @@ function getAllTodos() {
             trashImg.addEventListener('click',deleteATodo); 
             todoDiv.appendChild(trashImg);  //aggiungi l'img al div del todo i-esimo
             const completed = document.createElement("img");
-            if(todoArray[i].completed === true){
+            if(todoArray[i].completato == true){
                 completed.src = "img/6549974331557740369-512.png";
-            }
-            else{
-                completed.src = "img/todo-client-js\img\27471603216366515445442-512.png";
+            }else{
+                completed.src = "img/27471603216366515445442-512.png";
             }
             completed.title = "completed";
             completed.width = 20;
             completed.alt = "completed";
             completed.setAttribute("id",todoArray[i].id);
-            completed.setAttribute("status",todoArray[i].completed);
+            completed.setAttribute("completed",todoArray[i].completed);
             completed.addEventListener("click",completeATodo);
-            li.appendChild(completed);
-
-            ol.appendChild(li);
+            todoDiv.appendChild(completed);
             todoList.appendChild(todoDiv);  //aggiungi il div del todo i-esimo al div dei todo
         }
     }).catch((error) => {
@@ -86,12 +83,19 @@ function postATodo() {
 
 function completeATodo(event) {
 
-    let id = event.target.getAttribute('id');   //per eseguire la put, abbiamo bisogno dell'id del todo
+    const completionAttr = {
+        id : event.target.getAttribute("id"),
+        completed : event.target.getAttribute("completed")
+    };
 
-    axios.put(baseUrl+'togglecompleted/'+id)
+    axios.put(baseUrl+'togglecompleted/'+completionAttr.id,completionAttr)
     .then((response) => {
         getAllTodos();          //come prima cosa, ricarico la lista dei todo
-        const todoDiv = event.target;
+        if(completionAttr.completed === true) {
+            event.target.src = "img/6549974331557740369-512.png";
+        } else {
+            event.target.src = "img/27471603216366515445442-512.png";
+        }
         
     }).catch((error) => {
         console.log(error);
